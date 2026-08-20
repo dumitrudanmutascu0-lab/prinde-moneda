@@ -200,7 +200,10 @@
     if (!playing) return;
 
     score += 5;
-
+special.style.transform = "scale(1.5)";
+setTimeout(() => {
+  special.style.transform = "scale(1)";
+}, 150);
     randomPosition(special);
     randomPosition(bomb);
 
