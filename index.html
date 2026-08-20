@@ -232,10 +232,15 @@ setTimeout(() => {
   };
 
   bomb.onclick = function () {
-    if (!playing) return;
+  if (!playing) return;
 
+  bomb.style.transform = "scale(1.8)";
+
+  setTimeout(() => {
+    bomb.style.transform = "scale(1)";
     endGame();
-  };
+  }, 200);
+};
 
   coin.style.display = "none";
   special.style.display = "none";
