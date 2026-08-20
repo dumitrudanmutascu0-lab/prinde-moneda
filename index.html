@@ -175,27 +175,28 @@
     start.style.display = "flex";
   }
 
-  
-    coin.onclick = function () {
+  coin.onclick = function () {
   if (!playing) return;
 
   score++;
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const oscillator = audioCtx.createOscillator();
-const gain = audioCtx.createGain();
 
-oscillator.frequency.value = 800;
-gain.gain.value = 0.1;
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  audioCtx.resume();
 
-oscillator.connect(gain);
-gain.connect(audioCtx.destination);
+  const oscillator = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
 
-oscillator.start();
-oscillator.stop(audioCtx.currentTime + 0.1);
+  oscillator.frequency.value = 800;
+  gain.gain.value = 0.1;
 
+  oscillator.connect(gain);
+  gain.connect(audioCtx.destination);
 
-coin.style.transform = "scale(1.4)";
-  
+  oscillator.start();
+  oscillator.stop(audioCtx.currentTime + 0.1);
+
+  coin.style.transform = "scale(1.4)";
+
   setTimeout(() => {
     coin.style.transform = "scale(1)";
   }, 100);
@@ -209,6 +210,8 @@ coin.style.transform = "scale(1.4)";
 
   update();
 };
+                                     
+
 
   special.onclick = function () {
     if (!playing) return;
