@@ -180,7 +180,18 @@
   if (!playing) return;
 
   score++;
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const oscillator = audioCtx.createOscillator();
+const gain = audioCtx.createGain();
 
+oscillator.frequency.value = 800;
+gain.gain.value = 0.1;
+
+oscillator.connect(gain);
+gain.connect(audioCtx.destination);
+
+oscillator.start();
+oscillator.stop(audioCtx.currentTime + 0.1);
 
 
 coin.style.transform = "scale(1.4)";
