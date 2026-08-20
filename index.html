@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -24,9 +25,9 @@
       overflow: hidden;
     }
 
-    #score {
-      font-size: 24px;
-      padding: 15px;
+    #info {
+      padding: 12px;
+      font-size: 20px;
     }
 
     #coin, #bomb {
@@ -58,88 +59,117 @@
 
 <body>
 
-  <div id="game">
-    <div id="score">Scor: 0</div>
+<div id="game">
 
-    <div id="coin">🪙</div>
-    <div id="bomb">💣</div>
-
-    <div id="start">
-      <h1>Prinde moneda!</h1>
-      <p>Prinde monedele și evită bombele!</p>
-      <button onclick="startGame()">JOACĂ</button>
-    </div>
+  <div id="info">
+    🪙 Scor: <span id="score">0</span>
+    &nbsp; | &nbsp;
+    ⏱️ Timp: <span id="time">30</span>
   </div>
 
-  <script>
-    let score = 0;
-    let best = Number(localStorage.getItem("bestScore")) || 0;
-    let playing = false;
+  <div id="coin">🪙</div>
+  <div id="bomb">💣</div>
 
-    const coin = document.getElementById("coin");
-    const bomb = document.getElementById("bomb");
-    const scoreText = document.getElementById("score");
-    const start = document.getElementById("start");
-    const game = document.getElementById("game");
+  <div id="start">
+    <h1>Prinde moneda!</h1>
+    <p>Ai 30 de secunde. Evită bombele!</p>
+    <button onclick="startGame()">JOACĂ</button>
+  </div>
 
-    function randomPosition(element) {
-      const maxX = game.clientWidth - 60;
-      const maxY = game.clientHeight - 100;
+</div>
 
-      element.style.left = Math.random() * maxX + "px";
-      element.style.top = 60 + Math.random() * maxY + "px";
-    }
+<script>
+  let score = 0;
+  let best = Number(localStorage.getItem("bestScore")) || 0;
+  let time = 30;
+  let playing = false;
+  let timer;
 
-    function update() {
-      scoreText.textContent = "Scor: " + score;
-    }
+  const coin = document.getElementById("coin");
+  const bomb = document.getElementById("bomb");
+  const scoreText = document.getElementById("score");
+  const timeText = document.getElementById("time");
+  const start = document.getElementById("start");
+  const game = document.getElementById("game");
 
-    function startGame() {
-      score = 0;
-      playing = true;
+  function randomPosition(element) {
+    const maxX = game.clientWidth - 60;
+    const maxY = game.clientHeight - 100;
 
-      start.style.display = "none";
-      coin.style.display = "block";
-      bomb.style.display = "block";
+    element.style.left = Math.random() * maxX + "px";
+    element.style.top = 60 + Math.random() * maxY + "px";
+  }
 
-      randomPosition(coin);
-      randomPosition(bomb);
+  function update() {
+    scoreText.textContent = score;
+    timeText.textContent = time;
+  }
+
+  function startGame() {
+    score = 0;
+    time = 30;
+    playing = true;
+
+    start.style.display = "none";
+    coin.style.display = "block";
+    bomb.style.display = "block";
+
+    randomPosition(coin);
+    randomPosition(bomb);
+    update();
+
+    clearInterval(timer);
+
+    timer = setInterval(function () {
+      time--;
       update();
-    }
 
-    coin.onclick = function () {
-      if (!playing) return;
-
-      score++;
-      randomPosition(coin);
-      randomPosition(bomb);
-      update();
-    };
-
-    bomb.onclick = function () {
-      if (!playing) return;
-
-      playing = false;
-
-      if (score > best) {
-        best = score;
-        localStorage.setItem("bestScore", best);
+      if (time <= 0) {
+        endGame();
       }
+    }, 1000);
+  }
 
-      coin.style.display = "none";
-      bomb.style.display = "none";
-
-      document.querySelector("#start h1").textContent = "Bravo! 🎉";
-      document.querySelector("#start p").textContent =
-        "Ai făcut " + score + " puncte! Record: " + best;
-
-      document.querySelector("#start button").textContent = "JOACĂ DIN NOU";
-      start.style.display = "flex";
-    };
+  function endGame() {
+    playing = false;
+    clearInterval(timer);
 
     coin.style.display = "none";
     bomb.style.display = "none";
-  </script>
+
+    if (score > best) {
+      best = score;
+      localStorage.setItem("bestScore", best);
+    }
+
+    document.querySelector("#start h1").textContent = "Timpul a expirat! 🎉";
+
+    document.querySelector("#start p").textContent =
+      "Ai făcut " + score + " puncte! Record: " + best;
+
+    document.querySelector("#start button").textContent = "JOACĂ DIN NOU";
+
+    start.style.display = "flex";
+  }
+
+  coin.onclick = function () {
+    if (!playing) return;
+
+    score++;
+    randomPosition(coin);
+    randomPosition(bomb);
+    update();
+  };
+
+  bomb.onclick = function () {
+    if (!playing) return;
+
+    endGame();
+  };
+
+  coin.style.display = "none";
+  bomb.style.display = "none";
+</script>
 
 </body>
 </html>
