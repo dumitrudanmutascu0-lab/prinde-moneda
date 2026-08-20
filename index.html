@@ -27,10 +27,10 @@
 
     #info {
       padding: 12px;
-      font-size: 20px;
+      font-size: 19px;
     }
 
-    #coin, #bomb {
+    #coin, #special, #bomb {
       position: absolute;
       font-size: 45px;
       cursor: pointer;
@@ -65,14 +65,18 @@
     🪙 Scor: <span id="score">0</span>
     &nbsp; | &nbsp;
     ⏱️ Timp: <span id="time">30</span>
+    &nbsp; | &nbsp;
+    ⭐ Nivel: <span id="level">1</span>
   </div>
 
   <div id="coin">🪙</div>
+  <div id="special">💚</div>
   <div id="bomb">💣</div>
 
   <div id="start">
     <h1>Prinde moneda!</h1>
-    <p>Ai 30 de secunde. Evită bombele!</p>
+    <p>🪙 = 1 punct &nbsp; 💚 = 5 puncte</p>
+    <p>💣 = pierzi runda!</p>
     <button onclick="startGame()">JOACĂ</button>
   </div>
 
@@ -82,13 +86,18 @@
   let score = 0;
   let best = Number(localStorage.getItem("bestScore")) || 0;
   let time = 30;
+  let level = 1;
   let playing = false;
   let timer;
 
   const coin = document.getElementById("coin");
+  const special = document.getElementById("special");
   const bomb = document.getElementById("bomb");
+
   const scoreText = document.getElementById("score");
   const timeText = document.getElementById("time");
+  const levelText = document.getElementById("level");
+
   const start = document.getElementById("start");
   const game = document.getElementById("game");
 
@@ -103,25 +112,36 @@
   function update() {
     scoreText.textContent = score;
     timeText.textContent = time;
+    levelText.textContent = level;
   }
 
   function startGame() {
     score = 0;
     time = 30;
+    level = 1;
     playing = true;
 
     start.style.display = "none";
+
     coin.style.display = "block";
+    special.style.display = "block";
     bomb.style.display = "block";
 
     randomPosition(coin);
+    randomPosition(special);
     randomPosition(bomb);
+
     update();
 
     clearInterval(timer);
 
     timer = setInterval(function () {
       time--;
+
+      if (score >= level * 10) {
+        level++;
+      }
+
       update();
 
       if (time <= 0) {
@@ -135,6 +155,7 @@
     clearInterval(timer);
 
     coin.style.display = "none";
+    special.style.display = "none";
     bomb.style.display = "none";
 
     if (score > best) {
@@ -142,12 +163,14 @@
       localStorage.setItem("bestScore", best);
     }
 
-    document.querySelector("#start h1").textContent = "Timpul a expirat! 🎉";
+    document.querySelector("#start h1").textContent =
+      "Bravo! 🎉";
 
     document.querySelector("#start p").textContent =
       "Ai făcut " + score + " puncte! Record: " + best;
 
-    document.querySelector("#start button").textContent = "JOACĂ DIN NOU";
+    document.querySelector("#start button").textContent =
+      "JOACĂ DIN NOU";
 
     start.style.display = "flex";
   }
@@ -156,8 +179,29 @@
     if (!playing) return;
 
     score++;
+
     randomPosition(coin);
     randomPosition(bomb);
+
+    if (score % 10 === 0) {
+      level++;
+    }
+
+    update();
+  };
+
+  special.onclick = function () {
+    if (!playing) return;
+
+    score += 5;
+
+    randomPosition(special);
+    randomPosition(bomb);
+
+    if (score % 10 === 0) {
+      level++;
+    }
+
     update();
   };
 
@@ -168,6 +212,7 @@
   };
 
   coin.style.display = "none";
+  special.style.display = "none";
   bomb.style.display = "none";
 </script>
 
