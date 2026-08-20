@@ -180,7 +180,8 @@
   if (!playing) return;
 
   score++;
-
+const sound = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+sound.play();
   coin.style.transform = "scale(1.4)";
   setTimeout(() => {
     coin.style.transform = "scale(1)";
