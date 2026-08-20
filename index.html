@@ -175,20 +175,26 @@
     start.style.display = "flex";
   }
 
-  coin.onclick = function () {
-    if (!playing) return;
+  
+    coin.onclick = function () {
+  if (!playing) return;
 
-    score++;
+  score++;
 
-    randomPosition(coin);
-    randomPosition(bomb);
+  coin.style.transform = "scale(1.4)";
+  setTimeout(() => {
+    coin.style.transform = "scale(1)";
+  }, 100);
 
-    if (score % 10 === 0) {
-      level++;
-    }
+  randomPosition(coin);
+  randomPosition(bomb);
 
-    update();
-  };
+  if (score % 10 === 0) {
+    level++;
+  }
+
+  update();
+};
 
   special.onclick = function () {
     if (!playing) return;
