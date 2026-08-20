@@ -1,19 +1,145 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prinde moneda</title>
 
-  document.querySelector("#start h1").textContent="Bravo! 🎉";
-  document.querySelector("#start p").textContent=
-    "Ai făcut "+score+" puncte! Record: "+best;
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+    }
 
-  document.querySelector("#start button").textContent="JOACĂ DIN NOU";
-  document.getElementById("start").style.display="flex";
+    #game {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      height: 600px;
+      margin: auto;
+      background: #222;
+      overflow: hidden;
+    }
 
-  update();
-}
+    #score {
+      font-size: 24px;
+      padding: 15px;
+    }
 
-coin.style.display="none";
-bomb.style.display="none";
-update();
-</script>
+    #coin, #bomb {
+      position: absolute;
+      font-size: 45px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #start {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #222;
+    }
+
+    button {
+      padding: 15px 25px;
+      font-size: 20px;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="game">
+    <div id="score">Scor: 0</div>
+
+    <div id="coin">🪙</div>
+    <div id="bomb">💣</div>
+
+    <div id="start">
+      <h1>Prinde moneda!</h1>
+      <p>Prinde monedele și evită bombele!</p>
+      <button onclick="startGame()">JOACĂ</button>
+    </div>
+  </div>
+
+  <script>
+    let score = 0;
+    let best = Number(localStorage.getItem("bestScore")) || 0;
+    let playing = false;
+
+    const coin = document.getElementById("coin");
+    const bomb = document.getElementById("bomb");
+    const scoreText = document.getElementById("score");
+    const start = document.getElementById("start");
+    const game = document.getElementById("game");
+
+    function randomPosition(element) {
+      const maxX = game.clientWidth - 60;
+      const maxY = game.clientHeight - 100;
+
+      element.style.left = Math.random() * maxX + "px";
+      element.style.top = 60 + Math.random() * maxY + "px";
+    }
+
+    function update() {
+      scoreText.textContent = "Scor: " + score;
+    }
+
+    function startGame() {
+      score = 0;
+      playing = true;
+
+      start.style.display = "none";
+      coin.style.display = "block";
+      bomb.style.display = "block";
+
+      randomPosition(coin);
+      randomPosition(bomb);
+      update();
+    }
+
+    coin.onclick = function () {
+      if (!playing) return;
+
+      score++;
+      randomPosition(coin);
+      randomPosition(bomb);
+      update();
+    };
+
+    bomb.onclick = function () {
+      if (!playing) return;
+
+      playing = false;
+
+      if (score > best) {
+        best = score;
+        localStorage.setItem("bestScore", best);
+      }
+
+      coin.style.display = "none";
+      bomb.style.display = "none";
+
+      document.querySelector("#start h1").textContent = "Bravo! 🎉";
+      document.querySelector("#start p").textContent =
+        "Ai făcut " + score + " puncte! Record: " + best;
+
+      document.querySelector("#start button").textContent = "JOACĂ DIN NOU";
+      start.style.display = "flex";
+    };
+
+    coin.style.display = "none";
+    bomb.style.display = "none";
+  </script>
 
 </body>
 </html>
- 
